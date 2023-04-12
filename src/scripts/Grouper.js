@@ -1,13 +1,9 @@
-﻿import {ref} from "vue";
+﻿import {reactive,} from "vue";
 
 export class Grouper {
     #groups;
     #onAdd;
     #onRemove;
-    
-    #reactive= [];
-    
-    #indexGroupForAdd
     
     constructor(groups, onAddCallback, onRemoveCallback) {
         this.#initGroups(groups);
@@ -18,40 +14,48 @@ export class Grouper {
     #initGroups(groups){
         this.#groups = [];
         groups.forEach(element => {
-            this.#groups.push(element);
-            this.#reactive[element] = ref([]);
+            this.#groups[element] = reactive([]);
         })
-        this.#indexGroupForAdd = 0;
     }
-    
-    #updateIndexGroupForAdd(){
-        this.#indexGroupForAdd++;
-        
-        if(this.#indexGroupForAdd >= this.#groups.length){
-            this.#indexGroupForAdd = 0;
+
+    #canBeAdded(groupName){
+        if(this.#containsGroup(groupName) === false) {
+            return true;
         }
+        
+        return this.#groups[groupName].length < 3
     }
     
-    addToGroup(value){
-        const groupName = this.#groups[this.#indexGroupForAdd]
-        
+    addToGroup(groupName, value){
         if(this.#containsGroup(groupName) === false){
             this.#createGroup(groupName);
         }
         
-        this.#groups[groupName].push(value);
-        this.#reactive[groupName].value.push(value);
-        this.#onAdd(value);
+        if(this.#canBeAdded(groupName) === false){
+            this.#tryFillEmpty(groupName)
+        }
 
-        this.#updateIndexGroupForAdd();
+        this.#groups[groupName].push(value);
+        this.#onAdd(value);
     }
     
-    getGroupName(index){
-        return this.#groups[index];
+    #tryFillEmpty(groupName, value){
+        const group = this.#groups[groupName]
+        let targetIndex = -1
+        
+        group.forEach((element, index) => {
+            if(element !== null){
+                targetIndex = index;
+            }
+        })
+        
+        if(targetIndex !== -1) {
+            group[targetIndex] = value;
+        }
     }
     
-    getReactive(index){
-        return this.#reactive[this.getGroupName(index)];
+    getReactive(groupName){
+        return this.#groups[groupName];
     }
     
     removeFromGroup(groupName, value){
@@ -61,10 +65,9 @@ export class Grouper {
         
         const group = this.#groups[groupName];
         const element = group.find(x => x.id === value.id);
-        
-        if(element !== null) {
-            group.splice(element, 1);
-        }
+        const index = group.indexOf(element)
+        group[index] = null;
+        console.log(group)
         
         this.#onRemove(value);        
     }

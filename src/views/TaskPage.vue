@@ -9,28 +9,24 @@ import {Grouper} from "@/scripts/Grouper";
 import {onMounted, ref} from "vue";
 
 const reactiveFirst = ref([])
-
+const groups = ['Группа 1', 'Группа 2']
 const grouper = new Grouper(
-    ['Группа 1', 'Группа 2'],
+    groups,
     (value) => {reactiveFirst.value.push(value)}, 
     () => {}
 )
 
 const players = ref(Array.from(Players));
 const selectedPlayer = ref(null);
-const mock = ref();
 
-function onPlayerSelected(player){
-    if(selectedPlayer.value != null && selectedPlayer.value.id === player.id){
-        addPlayerToGroup();
-        return;
+function tryAddPlayerToGroup(groupName){
+    if(selectedPlayer.value != null){
+        addPlayerToGroup(groupName);
     }
-    
-    selectedPlayer.value = player;
 }
 
-function addPlayerToGroup(){
-    grouper.addToGroup(selectedPlayer.value);
+function addPlayerToGroup(groupName){
+    grouper.addToGroup(groupName, selectedPlayer.value);
     removeFreePlayer();
     selectedPlayer.value = null;
 }
@@ -38,10 +34,15 @@ function addPlayerToGroup(){
 function removeFreePlayer(){
     const index = players.value.indexOf(selectedPlayer.value);
     players.value.splice(index, 1);
+    selectedPlayer.value = null;
+}
+
+function onRemovedPlayerFromGroup(groupName, player){
+    players.value.push(player);
+    grouper.removeFromGroup(groupName, player)
 }
 
 onMounted(() => {
-    console.log(players.value)
     players.value.forEach(element => {
         element.fullName = `${element.name} ${element.surname}`
     })
@@ -52,7 +53,7 @@ onMounted(() => {
     <div class="grid mt-2">
         <div class="col-1"></div>
         <div class="col-4">
-        <DataTable v-model:selection="mock" @update:selection="onPlayerSelected" class="user-select-none border-1 border-400" :value="players" selectionMode="single">
+        <DataTable v-model:selection="selectedPlayer" class="user-select-none border-1 border-400" :value="players" selectionMode="single">
             <Column header="№" style="width: 15%;">
                 <template #body="slotProps">
                     {{ slotProps.index + 1 }}
@@ -65,8 +66,11 @@ onMounted(() => {
         <div class="col-1"></div>
         <div class="col-5">
             <div class="flex justify-content-between w-100">
-                <GroupBox :group-title="grouper.getGroupName(0)" :data="grouper.getReactive(0)"/>
-                <GroupBox :group-title="grouper.getGroupName(1)" :data="grouper.getReactive(1)"/>
+                <GroupBox v-for="group in groups"
+                          :group-title="group" 
+                          :data="grouper.getReactive(group)"
+                          @click="tryAddPlayerToGroup(group)"
+                          @player-removed="onRemovedPlayerFromGroup"/>
             </div>
         </div>
         <div class="col-1"></div>
