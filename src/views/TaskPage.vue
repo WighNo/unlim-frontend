@@ -8,12 +8,16 @@ import {Players} from "@/data/Source.js";
 import {Grouper} from "@/scripts/Grouper";
 import {onMounted, ref} from "vue";
 
-const reactiveFirst = ref([])
 const groups = ['Группа 1', 'Группа 2']
 const grouper = new Grouper(
     groups,
-    (value) => {reactiveFirst.value.push(value)}, 
-    () => {}
+    () => {
+        removeFreePlayer();
+        selectedPlayer.value = null;
+    }, 
+    () => {
+        
+    }
 )
 
 const players = ref(Array.from(Players));
@@ -27,8 +31,7 @@ function tryAddPlayerToGroup(groupName){
 
 function addPlayerToGroup(groupName){
     grouper.addToGroup(groupName, selectedPlayer.value);
-    removeFreePlayer();
-    selectedPlayer.value = null;
+
 }
 
 function removeFreePlayer(){

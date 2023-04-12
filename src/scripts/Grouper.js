@@ -30,9 +30,13 @@ export class Grouper {
         if(this.#containsGroup(groupName) === false){
             this.#createGroup(groupName);
         }
+
+        if(this.#tryFillEmpty(groupName, value) === true){
+            return;
+        }
         
         if(this.#canBeAdded(groupName) === false){
-            this.#tryFillEmpty(groupName)
+            return
         }
 
         this.#groups[groupName].push(value);
@@ -40,18 +44,22 @@ export class Grouper {
     }
     
     #tryFillEmpty(groupName, value){
-        const group = this.#groups[groupName]
         let targetIndex = -1
-        
-        group.forEach((element, index) => {
-            if(element !== null){
-                targetIndex = index;
+
+        const group = this.#groups[groupName]
+        for(let i = 0; i < group.length; i++){
+            if(group[i] == null){
+                targetIndex = i;
+                break;
             }
-        })
-        
-        if(targetIndex !== -1) {
-            group[targetIndex] = value;
         }
+        
+        if(targetIndex === -1){
+            return false;
+        }
+        group[targetIndex] = value;
+        this.#onAdd(value);
+        return true
     }
     
     getReactive(groupName){
@@ -64,12 +72,10 @@ export class Grouper {
         }
         
         const group = this.#groups[groupName];
-        const element = group.find(x => x.id === value.id);
-        const index = group.indexOf(element)
+        const index = group.indexOf(value)
         group[index] = null;
-        console.log(group)
+        this.#onRemove(value); 
         
-        this.#onRemove(value);        
     }
     
     #containsGroup(groupName){
