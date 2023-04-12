@@ -1,9 +1,7 @@
-<template>
-    <Menubar :model="items" />
-</template>
-
 <script setup>
+/* eslint-disable */
 import Menubar from 'primevue/menubar';
+import Button from 'primevue/button'
 import router from '@/router';
 import { ref } from "vue";
 
@@ -20,3 +18,7 @@ const items = ref([
     },
 ]);
 </script>
+
+<template>
+    <Menubar :model="items"/>
+</template>
