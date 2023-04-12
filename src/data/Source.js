@@ -1,4 +1,4 @@
-﻿const players = [
+﻿export const Players = [
     {
         "id": 164679,
         "name": "Руслан",
@@ -61,7 +61,7 @@
     },
 ];
 
-const groups = [
+export const Groups = [
     {
         "group_id": 1,
     },
