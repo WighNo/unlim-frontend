@@ -6,7 +6,7 @@ const props = defineProps({
     groupTitle: {
         required: true
     },
-    data: {
+    group: {
         required: true
     }
 })
@@ -34,14 +34,14 @@ function tryRemoveFromGroup(player){
     <div class="flex flex-column align-items-center">
         <p class="text-xl text-gray-800">{{props.groupTitle}}</p>
         <div class="w-17rem h-17rem bg-gray-200 px-4 pt-1">
-            <div v-for="player in props.data" :key="player" class="group-record -m-2">
-                <div v-if="player != null">
-                <p  class="text-xl text-center text-700 p-1" @click="selectPlayer(player)">
-                    {{player.name}} {{player.surname}}
-                </p>
+            <div v-for="player in props.group" :key="player" class="-m-2">
+                <div v-if="player != null" class="group-record">
+                    <p  class="text-xl text-center text-700 p-1" @click="selectPlayer(player)">
+                        {{player.name}} {{player.surname}}
+                    </p>
                 </div>
-                <div v-else class="group-record-empty">
-                    dwdw
+                <div v-else class="group-record-empty p-1 mt-4">
+                    
                 </div>
             </div>
         </div>
@@ -60,9 +60,10 @@ function tryRemoveFromGroup(player){
 }
 
 .group-record-empty{
-    cursor: pointer;
     user-select: none;
-    background-color: rgba(250, 250, 250, 0.49);
+    height: 30px;
+    width: 100%;
+    background-color: #d0d0d0;
 
     :hover {
         outline: 1px solid #7da7c7;

@@ -4,85 +4,85 @@ export class Grouper {
     #groups;
     #onAdd;
     #onRemove;
-    
+
     constructor(groups, onAddCallback, onRemoveCallback) {
         this.#initGroups(groups);
         this.#onAdd = onAddCallback;
         this.#onRemove = onRemoveCallback;
     }
-    
-    #initGroups(groups){
+
+    #initGroups(groups) {
         this.#groups = [];
+
         groups.forEach(element => {
-            this.#groups[element] = reactive([]);
+            const groupName = element.name;
+
+            this.#groups[groupName] = reactive(element);
         })
     }
 
-    #canBeAdded(groupName){
-        if(this.#containsGroup(groupName) === false) {
-            return true;
-        }
-        
-        return this.#groups[groupName].length < 3
-    }
-    
-    addToGroup(groupName, value){
-        if(this.#containsGroup(groupName) === false){
-            this.#createGroup(groupName);
-        }
-
-        if(this.#tryFillEmpty(groupName, value) === true){
+    addToGroup(group, value) {
+        if (this.#containsGroup(group) === false) {
             return;
         }
-        
-        if(this.#canBeAdded(groupName) === false){
-            return
-        }
 
-        this.#groups[groupName].push(value);
-        this.#onAdd(value);
+        this.#tryFillEmpty(group, value);
     }
-    
-    #tryFillEmpty(groupName, value){
-        let targetIndex = -1
 
-        const group = this.#groups[groupName]
-        for(let i = 0; i < group.length; i++){
-            if(group[i] == null){
-                targetIndex = i;
-                break;
+    #tryFillEmpty(group, value) {
+        console.log(group)
+        console.log(value)
+
+        const groupData = this.#groups[group.name].data;
+        for (let i = 0; i < groupData.length; i++) {
+            if (groupData[i] == null) {
+                groupData[i] = value
+                this.#onAdd(value);
+                return
             }
         }
-        
-        if(targetIndex === -1){
-            return false;
-        }
-        group[targetIndex] = value;
-        this.#onAdd(value);
-        return true
     }
-    
-    getReactive(groupName){
-        return this.#groups[groupName];
+
+    getReactive(groupName) {
+        return this.#groups[groupName].data;
     }
-    
-    removeFromGroup(groupName, value){
-        if(this.#containsGroup(groupName) === false){
+
+    removeFromGroup(groupName, value) {
+        if (this.#containsGroup(groupName) === false) {
             return;
         }
-        
+
         const group = this.#groups[groupName];
         const index = group.indexOf(value)
         group[index] = null;
-        this.#onRemove(value); 
-        
+        this.#onRemove(value);
+
+    }
+
+    #containsGroup(group) {
+        return group.name in this.#groups;
+    }
+}
+
+export class Group {
+    #name
+    #size
+    data
+    
+    constructor(name, size) {
+        this.#name = name;
+        this.#size = size;
+        this.#initData();
     }
     
-    #containsGroup(groupName){
-        return groupName in this.#groups;
+    #initData(){
+        this.data = [];
+        for(let i = 0; i < this.#size; i++){
+            this.data.push(null);
+        }
     }
-    
-    #createGroup(groupName){
-        this.#groups[groupName] = [];
+
+    get name(){
+        return this.#name;
     }
 }

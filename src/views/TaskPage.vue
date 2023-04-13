@@ -5,10 +5,10 @@ import Column from "primevue/column";
 import GroupBox from "@/components/GroupBox.vue";
 
 import {Players} from "@/data/Source.js";
-import {Grouper} from "@/scripts/Grouper";
+import {Grouper, Group} from "@/scripts/Grouper";
 import {onMounted, ref} from "vue";
 
-const groups = ['Группа 1', 'Группа 2']
+const groups = [new Group('Группа 1', 3), new Group('Группа 2', 3)]
 const grouper = new Grouper(
     groups,
     () => {
@@ -70,8 +70,8 @@ onMounted(() => {
         <div class="col-5">
             <div class="flex justify-content-between w-100">
                 <GroupBox v-for="group in groups"
-                          :group-title="group" 
-                          :data="grouper.getReactive(group)"
+                          :group-title="group.name" 
+                          :group="grouper.getReactive(group.name)"
                           @click="tryAddPlayerToGroup(group)"
                           @player-removed="onRemovedPlayerFromGroup"/>
             </div>
