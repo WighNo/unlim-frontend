@@ -1,4 +1,4 @@
-﻿import {reactive,} from "vue";
+﻿import { reactive,} from "vue";
 
 export class Grouper {
     #groups;
@@ -15,25 +15,16 @@ export class Grouper {
         this.#groups = [];
 
         groups.forEach(element => {
-            const groupName = element.name;
-
-            this.#groups[groupName] = reactive(element);
+            this.#groups[element.name] = reactive(element);
         })
     }
 
-    addToGroup(group, value) {
-        if (this.#containsGroup(group) === false) {
-            return;
-        }
-
-        this.#tryFillEmpty(group, value);
+    #containsGroup(groupName) {
+        return groupName in this.#groups;
     }
 
     #tryFillEmpty(group, value) {
-        console.log(group)
-        console.log(value)
-
-        const groupData = this.#groups[group.name].data;
+        const groupData = this.getData(group.name);
         for (let i = 0; i < groupData.length; i++) {
             if (groupData[i] == null) {
                 groupData[i] = value
@@ -43,8 +34,44 @@ export class Grouper {
         }
     }
 
-    getReactive(groupName) {
+    #hasFreeSlot(groupName) {
+        if (this.#containsGroup(groupName) === false) {
+            return false;
+        }
+
+        const groupData = this.getData(groupName);
+        for (let i = 0; i < groupData.length; i++) {
+            if (groupData[i] == null) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    getData(groupName) {
         return this.#groups[groupName].data;
+    }
+    
+    hasFreeGroup(){
+        const keys = Object.keys(this.#groups);
+
+        for(let i = 0; i < keys.length; i++) {
+            const element = keys[i];
+            if (this.#hasFreeSlot(element) === true) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    addToGroup(group, value) {
+        if (this.#containsGroup(group.name) === false) {
+            return;
+        }
+
+        this.#tryFillEmpty(group, value);
     }
 
     removeFromGroup(groupName, value) {
@@ -52,37 +79,40 @@ export class Grouper {
             return;
         }
 
-        const group = this.#groups[groupName];
-        const index = group.indexOf(value)
-        group[index] = null;
+        const groupData = this.#groups[groupName].data;
+        const index = groupData.indexOf(value)
+        groupData[index] = null;
+        
         this.#onRemove(value);
-
-    }
-
-    #containsGroup(group) {
-        return group.name in this.#groups;
     }
 }
 
 export class Group {
+    #id
     #name
     #size
     data
-    
-    constructor(name, size) {
-        this.#name = name;
+
+    constructor(groupData, size) {
+        this.#id = groupData.group_id;
+        this.#name = groupData.group_name;
+        
         this.#size = size;
         this.#initData();
     }
-    
-    #initData(){
+
+    #initData() {
         this.data = [];
-        for(let i = 0; i < this.#size; i++){
+        for (let i = 0; i < this.#size; i++) {
             this.data.push(null);
         }
     }
 
-    get name(){
+    get name() {
         return this.#name;
+    }
+
+    get id() {
+        return this.#id;
     }
 }

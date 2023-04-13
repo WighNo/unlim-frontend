@@ -64,11 +64,14 @@
 export const Groups = [
     {
         "group_id": 1,
+        "group_name": "Группа 1"
     },
     {
         "group_id": 2,
+        "group_name": "Группа 2"
     },
     {
         "group_id": 3,
+        "group_name": "Группа 3"
     },
 ]

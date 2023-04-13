@@ -1,5 +1,6 @@
 ﻿<script setup>
 import {ref} from "vue";
+import Skeleton from 'primevue/skeleton';
 
 // eslint-disable-next-line
 const props = defineProps({
@@ -33,16 +34,14 @@ function tryRemoveFromGroup(player){
 <template>
     <div class="flex flex-column align-items-center">
         <p class="text-xl text-gray-800">{{props.groupTitle}}</p>
-        <div class="w-17rem h-17rem bg-gray-200 px-4 pt-1">
+        <div class="w-17rem h-17rem bg-gray-100 px-4 pt-1">
             <div v-for="player in props.group" :key="player" class="-m-2">
                 <div v-if="player != null" class="group-record">
                     <p  class="text-xl text-center text-700 p-1" @click="selectPlayer(player)">
                         {{player.name}} {{player.surname}}
                     </p>
                 </div>
-                <div v-else class="group-record-empty p-1 mt-4">
-                    
-                </div>
+                <Skeleton v-else class="p-1 mt-4 group-record-empty" height="1.8rem"/>
             </div>
         </div>
     </div>
@@ -53,7 +52,7 @@ function tryRemoveFromGroup(player){
     cursor: pointer;
     user-select: none;
     background-color: #fafafa;
-    
+
     :hover {
         outline: 1px solid #7da7c7;
     }
@@ -64,9 +63,5 @@ function tryRemoveFromGroup(player){
     height: 30px;
     width: 100%;
     background-color: #d0d0d0;
-
-    :hover {
-        outline: 1px solid #7da7c7;
-    }
 }
 </style>

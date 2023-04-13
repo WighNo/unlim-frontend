@@ -7,12 +7,12 @@ import { ref } from "vue";
 
 const items = ref([
     {
-        label: 'Обо мне',
+        label: 'Главная',
         icon: 'pi pi-fw pi-user',
         command: () => router.push({ name: 'about-me' })
     },
     {
-        label: 'Задание',
+        label: 'Формирование групп',
         icon: 'pi pi-fw pi-pencil',
         command: () => router.push({ name: 'task' })
     },

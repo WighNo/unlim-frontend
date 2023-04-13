@@ -2,22 +2,21 @@
 /* eslint-disable */
 import DataTable from "primevue/datatable";
 import Column from "primevue/column";
+import Button from "primevue/button"
 import GroupBox from "@/components/GroupBox.vue";
 
-import {Players} from "@/data/Source.js";
+import {Players, Groups} from "@/data/Source.js";
 import {Grouper, Group} from "@/scripts/Grouper";
 import {onMounted, ref} from "vue";
 
-const groups = [new Group('Группа 1', 3), new Group('Группа 2', 3)]
+const groups = [new Group(Groups[0], 3), new Group(Groups[1], 3)]
 const grouper = new Grouper(
     groups,
     () => {
         removeFreePlayer();
         selectedPlayer.value = null;
     }, 
-    () => {
-        
-    }
+    () => {}
 )
 
 const players = ref(Array.from(Players));
@@ -31,7 +30,6 @@ function tryAddPlayerToGroup(groupName){
 
 function addPlayerToGroup(groupName){
     grouper.addToGroup(groupName, selectedPlayer.value);
-
 }
 
 function removeFreePlayer(){
@@ -41,6 +39,7 @@ function removeFreePlayer(){
 }
 
 function onRemovedPlayerFromGroup(groupName, player){
+    selectedPlayer.value = null;
     players.value.push(player);
     grouper.removeFromGroup(groupName, player)
 }
@@ -71,10 +70,11 @@ onMounted(() => {
             <div class="flex justify-content-between w-100">
                 <GroupBox v-for="group in groups"
                           :group-title="group.name" 
-                          :group="grouper.getReactive(group.name)"
+                          :group="grouper.getData(group.name)"
                           @click="tryAddPlayerToGroup(group)"
                           @player-removed="onRemovedPlayerFromGroup"/>
             </div>
+            <Button :disabled="grouper.hasFreeGroup()" class="mt-5 w-full" label="Сохранить"/>
         </div>
         <div class="col-1"></div>
     </div>
