@@ -10,7 +10,7 @@ export default createRouter({
         },
         {
             path: '/',
-            name: 'about-me',
+            name: 'home',
             component: () => import("@/views/AboutMe.vue")
         },
         {

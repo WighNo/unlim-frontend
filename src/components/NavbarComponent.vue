@@ -9,7 +9,7 @@ const items = ref([
     {
         label: 'Главная',
         icon: 'pi pi-fw pi-user',
-        command: () => router.push({ name: 'about-me' })
+        command: () => router.push({ name: 'home' })
     },
     {
         label: 'Формирование групп',

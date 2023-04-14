@@ -7,16 +7,21 @@ import GroupBox from "@/components/GroupBox.vue";
 
 import {Players, Groups} from "@/data/Source.js";
 import {Grouper, Group} from "@/scripts/Grouper";
+import {DataFormatter} from "@/scripts/DataFormatter";
 import {onMounted, ref} from "vue";
+import router from "@/router";
+import {onBeforeRouteLeave} from "vue-router";
 
-const groups = [new Group(Groups[0], 3), new Group(Groups[1], 3)]
+const hasNotSavedChanges = ref(false);
+const groups = [new Group(Groups[0]), new Group(Groups[1])]
 const grouper = new Grouper(
     groups,
     () => {
         removeFreePlayer();
         selectedPlayer.value = null;
+        hasNotSavedChanges.value = true;
     }, 
-    () => {}
+    () => hasNotSavedChanges.value = true
 )
 
 const players = ref(Array.from(Players));
@@ -44,10 +49,30 @@ function onRemovedPlayerFromGroup(groupName, player){
     grouper.removeFromGroup(groupName, player)
 }
 
+function saveChanges(){
+    const formatter = new DataFormatter(grouper)
+    console.log(formatter.format())
+    hasNotSavedChanges.value = false;
+}
+
 onMounted(() => {
     players.value.forEach(element => {
         element.fullName = `${element.name} ${element.surname}`
     })
+})
+
+onBeforeRouteLeave((to, from) => {
+    if (hasNotSavedChanges.value === false) return true;
+
+    if (hasNotSavedChanges.value === true && grouper.hasFreeGroup() === true) {
+        alert("Сохраните внесённые изменения");
+        return false;
+    }
+
+    const confirm = window.confirm("Сохранить внесённые изменения?");
+    if (confirm === false) return false;
+    saveChanges()
+    router.push({name: 'home'})
 })
 </script>
 
@@ -74,7 +99,10 @@ onMounted(() => {
                           @click="tryAddPlayerToGroup(group)"
                           @player-removed="onRemovedPlayerFromGroup"/>
             </div>
-            <Button :disabled="grouper.hasFreeGroup()" class="mt-5 w-full" label="Сохранить"/>
+            <Button :disabled="grouper.hasFreeGroup() || !hasNotSavedChanges"
+                    @click="saveChanges"
+                    class="mt-5 w-full"
+                    label="Сохранить"/>
         </div>
         <div class="col-1"></div>
     </div>

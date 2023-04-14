@@ -41,7 +41,7 @@ function tryRemoveFromGroup(player){
                         {{player.name}} {{player.surname}}
                     </p>
                 </div>
-                <Skeleton v-else class="p-1 mt-4 group-record-empty" height="1.8rem"/>
+                <Skeleton v-else class="p-1 mt-4 group-record-empty" animation="none" height="1.8rem"/>
             </div>
         </div>
     </div>

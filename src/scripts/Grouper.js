@@ -49,14 +49,16 @@ export class Grouper {
         return false;
     }
 
-    getData(groupName) {
-        return this.#groups[groupName].data;
-    }
+    getData = (groupName) => this.#groups[groupName].data;
+
+    getGroupId = (groupName) => this.#groups[groupName].id;
     
-    hasFreeGroup(){
+    getKeys = () => Object.keys(this.#groups);
+    
+    hasFreeGroup() {
         const keys = Object.keys(this.#groups);
 
-        for(let i = 0; i < keys.length; i++) {
+        for (let i = 0; i < keys.length; i++) {
             const element = keys[i];
             if (this.#hasFreeSlot(element) === true) {
                 return true;
@@ -82,19 +84,19 @@ export class Grouper {
         const groupData = this.#groups[groupName].data;
         const index = groupData.indexOf(value)
         groupData[index] = null;
-        
+
         this.#onRemove(value);
     }
 }
 
 export class Group {
-    #id
+    id
     #name
     #size
     data
 
-    constructor(groupData, size) {
-        this.#id = groupData.group_id;
+    constructor(groupData, size = 3) {
+        this.id = groupData.group_id;
         this.#name = groupData.group_name;
         
         this.#size = size;
@@ -110,9 +112,5 @@ export class Group {
 
     get name() {
         return this.#name;
-    }
-
-    get id() {
-        return this.#id;
     }
 }
