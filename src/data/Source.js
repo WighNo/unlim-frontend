@@ -1,4 +1,13 @@
-﻿export const Players = [
+﻿/**
+ * @module Data
+ */
+
+/**
+ * @constant
+ * @type {Array<{id: number, name: string, surname: string, birthday: string}>}
+ * Данные игроков
+ */ 
+export const Players = [
     {
         "id": 164679,
         "name": "Руслан",
@@ -61,6 +70,11 @@
     },
 ];
 
+/**
+ * @constant
+ * @type {Array<{group_id: number, group_name: string}>}
+ * Данные групп
+ */
 export const Groups = [
     {
         "group_id": 1,

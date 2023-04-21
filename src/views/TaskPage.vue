@@ -13,6 +13,7 @@ import router from "@/router";
 import {onBeforeRouteLeave} from "vue-router";
 
 const hasNotSavedChanges = ref(false);
+
 const groups = [new Group(Groups[0]), new Group(Groups[1])]
 const grouper = new Grouper(
     groups,
